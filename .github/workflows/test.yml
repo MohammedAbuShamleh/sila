@@ -1,0 +1,24 @@
+name: Test
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # Outside this workflow, every documented run of the suite has been on one Windows 11 machine,
+    # Node 22. macOS and Linux have never run it, so a runner for them would test the platform
+    # before the code.
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      # Builds to test-build/ and runs the thirteen files package.json names; site/ is not among them
+      - run: npm test

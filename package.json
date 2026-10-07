@@ -1,0 +1,47 @@
+{
+  "name": "sila-memory",
+  "version": "0.1.0",
+  "description": "Cross-agent memory vault: reads Claude Code / Codex / Gemini sessions, distills them into an append-only Markdown vault, serves them back over MCP.",
+  "license": "MIT",
+  "author": "Mohammed Abu Shamleh",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MohammedAbuShamleh/sila.git"
+  },
+  "homepage": "https://mohammedabushamleh.github.io/sila/",
+  "bugs": {
+    "url": "https://github.com/MohammedAbuShamleh/sila/issues"
+  },
+  "type": "module",
+  "files": [
+    "dist",
+    "!dist/**/*.map",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "sila": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:publish": "tsc -p tsconfig.publish.json",
+    "typecheck": "tsc --noEmit",
+    "sila": "node dist/cli.js",
+    "mcp": "node dist/serve/mcp.js",
+    "test": "tsc --outDir test-build && node test/redaction.test.mjs && node test/reconcile.test.mjs && node test/policy.test.mjs && node test/project.test.mjs && node test/adapters.test.mjs && node test/hook.test.mjs && node test/extract.test.mjs && node test/brief.test.mjs && node test/schedule.test.mjs && node test/order.test.mjs && node test/move.test.mjs && node test/audit.test.mjs && node test/gate.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "better-sqlite3": "^11.8.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.20.2",
+    "typescript": "^5.7.2"
+  }
+}

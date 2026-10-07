@@ -1,0 +1,8 @@
+* text=auto eol=lf
+
+# Left out of `git archive`, which is how the public repository is made from
+# the author's private one: the working contract, written for the author's
+# machine with the names of their projects, and the tools that hold those
+# names. Neither is published.
+CLAUDE.md export-ignore
+private/ export-ignore

@@ -1,0 +1,27 @@
+node_modules/
+dist/
+test-build/
+.history/
+*.tmp
+
+# The site (site/), merged from its own .gitignore when it moved here. The two
+# lines above already cover node_modules/ and dist/ at any depth; they are
+# repeated so the site's rules read whole without them.
+/site/node_modules/
+/site/dist/
+/site/dist-ssr/
+/site/*.local
+
+# Thmanyah Sans is licensed for use on your own devices only: its license forbids hosting the
+# font files or making them downloadable (web embedding included). Keep them out of the repo so
+# a push can never publish them; without them the site falls back to the next family in the stack.
+/site/public/fonts/thmanyah/
+
+# The memory brief sila injected into the site's folder while the site lived in a
+# folder of its own. The engine now resolves site/ to this repository's root,
+# where injection is off, so nothing writes these; ignored so a leftover can
+# never be committed.
+/site/CLAUDE.md
+/site/CLAUDE.local.md
+/site/AGENTS.md
+/site/GEMINI.md

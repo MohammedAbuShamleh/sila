@@ -1,0 +1,298 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Motion rule: every element's resting state is its final, readable state.
+ * Motion is only ever added, as animations inside (prefers-reduced-motion: no-preference):
+ * load animations in the hero, and entrances that start once the observer has seen an element
+ * scroll in (data-motion="enter", see useInView). Nothing waits hidden for a script.
+ */
+
+@layer base {
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus, theme('colors.forest.700'));
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/*
+ * Site classes are plain CSS on purpose, outside @layer components: Tailwind drops layered
+ * classes it can't find in the files it scanned, and a dev server whose watcher missed the new
+ * section files served the page without these backgrounds. Plain rules are always emitted.
+ */
+
+.page-wrap {
+  @apply mx-auto w-full max-w-page px-4 sm:px-6 lg:px-10;
+}
+
+/* ─── Hero ─── */
+.hero {
+  --focus: theme('colors.forest.100');
+  /* clip, not hidden: stripes and the rule overhang the edge on purpose, and `hidden` makes the
+     section programmatically scrollable (scrollIntoView / focus), shifting the hero sideways */
+  overflow: hidden;
+  overflow: clip;
+  /*
+   * 158° mirrored for RTL = 202°: the darkest corner is top-right, where the title starts.
+   * The paragraph must sit on forest-700 or darker, so that stop sits at 62%.
+   * The gradient box is at least 860px tall: on short screens the text keeps its pixel
+   * position while a 100%-tall gradient would compress under it into the light stops.
+   * The top layer melts the bottom edge into the next section, which starts white.
+   */
+  background-color: theme('colors.white');
+  background-image:
+    linear-gradient(to bottom, rgb(255 255 255 / 0) calc(100% - 180px), theme('colors.white') 100%),
+    linear-gradient(
+      202deg,
+      theme('colors.forest.900') 0%,
+      theme('colors.forest.700') 62%,
+      theme('colors.forest.500') 80%,
+      theme('colors.forest.300') 90%,
+      theme('colors.forest.100') 96%,
+      theme('colors.white') 100%
+    );
+  background-size:
+    100% 100%,
+    100% max(100%, 860px);
+  background-position: top;
+  background-repeat: no-repeat;
+}
+
+/* Thin vertical lines: white 9% every 46px. One period wider than the hero so it can drift seamlessly */
+.hero-stripes {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: calc(100% + 46px);
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgb(255 255 255 / 0.09) 0 1px,
+    transparent 1px 46px
+  );
+  pointer-events: none;
+}
+
+/*
+ * Follows the command row: positioned against it, not the section. Centre: 40px in from the
+ * row's left end, where the rule fades out (the capsule opens the row on the right), --cy below
+ * the row's centre. The paragraph ends 64px (md: 72px) above that centre, and on narrow screens
+ * it spans the full width, so the glow's top (cy − r above the centre) must stay ≥12px lower for
+ * the parallax: r − cy = 30 leaves 22px (md: 30px). From lg the paragraph starts ≥368px from the
+ * row's left end and the glow reaches 352px, so it can grow and rise beside the text instead.
+ */
+.hero-glow {
+  --r: 180px;
+  --cy: 150px;
+  position: absolute;
+  z-index: -10;
+  width: calc(var(--r) * 2);
+  aspect-ratio: 1;
+  left: calc(40px - var(--r));
+  top: calc(100% - 24px + var(--cy) - var(--r));
+  border-radius: 9999px;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 255 255 / 0.34),
+    rgb(255 255 255 / 0.12) 45%,
+    rgb(255 255 255 / 0)
+  );
+  pointer-events: none;
+}
+@media (min-width: theme('screens.md')) {
+  .hero-glow {
+    --r: 200px;
+    --cy: 170px;
+  }
+}
+@media (min-width: theme('screens.lg')) {
+  .hero-glow {
+    --r: 300px;
+    --cy: -120px;
+  }
+}
+
+/* ─── How it works ─── */
+/* The hero's stripes again, in white: invisible at the white top, surfacing as the green deepens */
+.how {
+  background-image:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.55) 0 1px, transparent 1px 46px),
+    linear-gradient(
+      180deg,
+      theme('colors.white') 0%,
+      theme('colors.forest.50') 28%,
+      theme('colors.forest.200') 68%,
+      theme('colors.forest.250') 100%
+    );
+}
+
+/* ─── Numbers band ─── */
+/* 110° mirrored for RTL = 250°: dark on the right, where the first figure sits, opening to
+   forest-500 on the left. forest-600 is held to 60% and the figures keep off the last stretch
+   (Numbers.tsx), so no label ever lands on forest-500 — stripes included. */
+.numbers {
+  background-color: theme('colors.forest.900');
+  background-image:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.09) 0 1px, transparent 1px 46px),
+    linear-gradient(
+      250deg,
+      theme('colors.forest.900') 0%,
+      theme('colors.forest.600') 60%,
+      theme('colors.forest.500') 100%
+    );
+}
+
+/* Link with an underline drawn from the right */
+.link-draw {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+  background-size: 0% 1px;
+  padding-bottom: 2px;
+}
+.link-draw:hover,
+.link-draw:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* Rules draw from the right: the line's start in RTL */
+.draw-x {
+  transform-origin: right center;
+}
+
+/* ─── Header ─── */
+/* Fixed. At rest it is transparent over the hero, 80px tall; once the page scrolls it becomes a
+   translucent forest-900 bar, 56px tall. Nav text on it stays ≥8.5:1 even over pure white. */
+.site-header {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 30;
+  height: 80px;
+  background-color: rgb(8 48 28 / 0);
+}
+.site-header[data-scrolled='true'] {
+  height: 56px;
+  background-color: rgb(8 48 28 / 0.86);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.06),
+    0 8px 24px -14px rgb(8 48 28 / 0.55);
+}
+.site-header[data-scrolled='true'] .site-tagline {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Anchored sections land below the shrunk header, not under it */
+section[id] {
+  scroll-margin-top: 56px;
+}
+
+/* ─── Guarantees ─── */
+/* Ghost index behind each cell: decoration drawn from data-ghost, so it is neither text nor read
+   aloud ("/ ''" is its empty alt text). forest-900 at 6% under muted body text still leaves ≥6.5:1. */
+.ghost-index::before {
+  content: attr(data-ghost);
+  content: attr(data-ghost) / '';
+  position: absolute;
+  z-index: -1;
+  top: 0.75rem;
+  inset-inline-end: 0.25rem;
+  font-family: theme('fontFamily.display');
+  font-size: 120px;
+  font-weight: 700;
+  line-height: 1;
+  color: rgb(8 48 28 / 0.06);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Heading words: whole inline-blocks so they can move one by one */
+.word {
+  display: inline-block;
+}
+
+/* Distance a rising element travels; cards travel further than heading words */
+.reveal {
+  --rise: 28px;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--rise, 16px), 0);
+  }
+}
+
+@keyframes draw-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes stripes-drift {
+  to {
+    transform: translate3d(-46px, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Headings word by word, 60ms apart: the hero title on load (CSS only), section titles once
+     scrolled into view */
+  .words-on-load .word,
+  [data-motion='enter'] .word {
+    animation: rise 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--w, 0) * 60ms);
+  }
+  /* The hero rule draws while the title is still settling */
+  .draw-on-load {
+    animation: draw-x 800ms cubic-bezier(0.65, 0, 0.35, 1) 250ms both;
+  }
+
+  /* Entrances, only once scrolled into view; --delay staggers siblings (120ms) */
+  .reveal[data-motion='enter'] {
+    animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) var(--delay, 0ms) both;
+  }
+  .draw-x[data-motion='enter'] {
+    animation: draw-x 800ms cubic-bezier(0.65, 0, 0.35, 1) 150ms both;
+  }
+
+  /* Header: shrink and tint together; the tagline fades out first */
+  .site-header {
+    transition:
+      height 300ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      background-color 300ms ease,
+      box-shadow 300ms ease;
+  }
+  .site-tagline {
+    transition:
+      opacity 180ms ease,
+      visibility 180ms;
+  }
+
+  /* Barely perceptible drift: 46px per 60 seconds */
+  .hero-stripes {
+    animation: stripes-drift 60s linear infinite;
+    will-change: transform;
+  }
+
+  .hero-glow {
+    transition: transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    will-change: transform;
+  }
+
+  .link-draw {
+    transition: background-size 300ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+}

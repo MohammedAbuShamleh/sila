@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "sila-dev",
+      "runtimeExecutable": "npm.cmd",
+      "runtimeArgs": ["run", "dev", "--", "--port", "5173", "--strictPort"],
+      "port": 5173
+    },
+    {
+      "name": "sila-preview",
+      "runtimeExecutable": "npm.cmd",
+      "runtimeArgs": ["run", "preview", "--", "--port", "4191", "--strictPort"],
+      "port": 4191
+    }
+  ]
+}
